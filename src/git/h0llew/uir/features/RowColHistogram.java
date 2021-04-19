@@ -1,35 +1,35 @@
-package git.h0llew.uir.symptoms;
+package git.h0llew.uir.features;
 
 import git.h0llew.uir.utils.BinaryImageConvertor;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class BrightnessMethod implements ISymptom {
+public class RowColHistogram implements IFeature {
 
     public static final int DEFAULT_THRESHOLD = 10;
     private int threshold;
 
-    public BrightnessMethod() {
+    public RowColHistogram() {
         this(DEFAULT_THRESHOLD);
     }
 
-    public BrightnessMethod(int threshold) {
+    public RowColHistogram(int threshold) {
         setThreshold(threshold);
     }
 
     @Override
-    public double[] createSymptom(BufferedImage image) {
+    public double[] createFeature(BufferedImage image) {
         BufferedImage binaryImage = convertToBinaryImage(image);
-        return calculateSymptom(binaryImage);
+        return calculateFeature(binaryImage);
     }
 
     private BufferedImage convertToBinaryImage(BufferedImage image) {
         return BinaryImageConvertor.convertFromGrayscale(image, threshold);
     }
 
-    private double[] calculateSymptom(BufferedImage image) {
-        double[] symptomVector = new double[image.getWidth() + image.getHeight()];
+    private double[] calculateFeature(BufferedImage image) {
+        double[] featureVector = new double[image.getWidth() + image.getHeight()];
 
         int[] rgb = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
         for (int y = 0; y < image.getHeight(); y++) {
@@ -37,13 +37,13 @@ public class BrightnessMethod implements ISymptom {
                 Color pxColor = new Color(rgb[x + y * image.getWidth()]);
 
                 if (!pxColor.equals(Color.WHITE)) {
-                    symptomVector[x]++;
-                    symptomVector[y + image.getWidth()]++;
+                    featureVector[x]++;
+                    featureVector[y + image.getWidth()]++;
                 }
             }
         }
 
-        return symptomVector;
+        return featureVector;
     }
 
     public void setThreshold(int threshold) throws IllegalArgumentException {
