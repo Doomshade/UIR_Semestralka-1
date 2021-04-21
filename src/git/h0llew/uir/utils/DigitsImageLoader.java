@@ -7,10 +7,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DigitsImageLoader {
 
@@ -45,6 +44,7 @@ public class DigitsImageLoader {
         try {
             for (int i = 0; i < DIGITS; i++) {
                 res[i] = loadDigit(i);
+                //loadDigit(i);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,9 +59,9 @@ public class DigitsImageLoader {
         if (!digitDirectoryPath.isDirectory())
             throw new NotDirectoryException(digitDirectoryPath.getAbsolutePath());
 
-        LinkedList<BufferedImage> imagesList = new LinkedList<>();
+        ArrayList<BufferedImage> imagesList = new ArrayList<>();
 
-        File[] images = digitDirectoryPath.listFiles(IMAGE_FILTER);
+        File[] images = digitDirectoryPath.listFiles();
         if (images == null)
             throw new NullPointerException();
         for (File file : images) {
@@ -69,5 +69,26 @@ public class DigitsImageLoader {
         }
 
         return imagesList.toArray(new BufferedImage[0]);
+    }
+
+    public static List<BufferedImage> loadImgs(File dir, List<Integer> dirIndexes) throws IOException {
+        return loadImgs(dir, new ArrayList<>(), new AtomicInteger(0), dirIndexes);
+    }
+
+    private static List<BufferedImage> loadImgs(File dir, List<BufferedImage> currImages, AtomicInteger index, List<Integer> dirIndexes) throws IOException {
+        if (!dir.isDirectory()) {
+            BufferedImage img = ImageIO.read(dir);
+            currImages.add(img);
+            index.incrementAndGet();
+        } else {
+            dirIndexes.add(index.getAcquire());
+            File[] files = Objects.requireNonNull(dir.listFiles());
+            for (File potentialDir : files) {
+                //if (potentialDir.isDirectory()) {
+                loadImgs(potentialDir, currImages, index, dirIndexes);
+                //}
+            }
+        }
+        return currImages;
     }
 }
