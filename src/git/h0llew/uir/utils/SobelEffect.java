@@ -3,6 +3,11 @@ package git.h0llew.uir.utils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * detektor hran v obrazku
+ *
+ * @author Martin Jakubasek
+ */
 public class SobelEffect {
 
     static int[][] gx = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
@@ -10,6 +15,12 @@ public class SobelEffect {
 
     static int[][] dirs = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
+    /**
+     * Detekuje v obrazku hrany
+     *
+     * @param image obrazek
+     * @return obrazek s detekovanyma hranama
+     */
     public static BufferedImage transformImage(BufferedImage image) {
         BufferedImage res = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 

@@ -1,30 +1,50 @@
 package git.h0llew.uir.utils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Trida slouzi pro nacitani souboru s obrazky cislic
+ *
+ * @author Martin Jakubasek
+ */
 public class DigitsImageLoader {
 
+    //-- PRIVATE ATTRIBUTES
+
+    /**
+     * Cesta k souboru
+     */
     private final String rootPath;
 
+    //-- CONSTRUCTORS
+
+    /**
+     * Vytvori novou tridu, ktera slouzi k nacitani obrazku s cislicemi
+     *
+     * @param rootPath cesta ke korenovemu adresari adresare obsahujici adresare s obrazky cislic
+     */
     public DigitsImageLoader(String rootPath) {
         this.rootPath = rootPath;
     }
 
-    //--
+    //-- PRIVATE STATIC METHODS
 
+    /**
+     * mozne koncovky souboru
+     */
     private static final String[] EXTENSIONS = new String[]{
             "png", "jpg"
     };
 
+    /**
+     * filtr souboru podle koncovek
+     */
     private static final FilenameFilter IMAGE_FILTER = (dir, name) -> {
         for (final String ext : EXTENSIONS) {
             if (name.endsWith("." + ext)) {
@@ -34,10 +54,15 @@ public class DigitsImageLoader {
         return false;
     };
 
-    //--
+    //-- PRIVATE STATIC ATTRIBUTES
 
     private static final int DIGITS = 10;
 
+    /**
+     * Nacte vsechny obrazky cislic
+     *
+     * @return obrazky cislic
+     */
     public BufferedImage[][] loadDigits() {
         BufferedImage[][] res = new BufferedImage[DIGITS][];
 
@@ -54,6 +79,14 @@ public class DigitsImageLoader {
         return res;
     }
 
+    /**
+     * Nacte obrazky cislice
+     *
+     * @param digit cislice
+     * @return obrazky cislice
+     * @throws IOException          soubor neni adresar nebo jina chyba
+     * @throws NullPointerException prazdna slozka obrazku
+     */
     private BufferedImage[] loadDigit(int digit) throws IOException, NullPointerException {
         File digitDirectoryPath = new File(rootPath + "\\" + digit);
         if (!digitDirectoryPath.isDirectory())
@@ -69,26 +102,5 @@ public class DigitsImageLoader {
         }
 
         return imagesList.toArray(new BufferedImage[0]);
-    }
-
-    public static List<BufferedImage> loadImgs(File dir, List<Integer> dirIndexes) throws IOException {
-        return loadImgs(dir, new ArrayList<>(), new AtomicInteger(0), dirIndexes);
-    }
-
-    private static List<BufferedImage> loadImgs(File dir, List<BufferedImage> currImages, AtomicInteger index, List<Integer> dirIndexes) throws IOException {
-        if (!dir.isDirectory()) {
-            BufferedImage img = ImageIO.read(dir);
-            currImages.add(img);
-            index.incrementAndGet();
-        } else {
-            dirIndexes.add(index.getAcquire());
-            File[] files = Objects.requireNonNull(dir.listFiles());
-            for (File potentialDir : files) {
-                //if (potentialDir.isDirectory()) {
-                loadImgs(potentialDir, currImages, index, dirIndexes);
-                //}
-            }
-        }
-        return currImages;
     }
 }
