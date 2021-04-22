@@ -1,17 +1,11 @@
 package git.h0llew.uir;
 
-import git.h0llew.uir.classifiers.ADigitClassifier;
-import git.h0llew.uir.classifiers.KNearestNeighbours;
 import git.h0llew.uir.classifiers.MinimumDistanceClassifier;
-import git.h0llew.uir.features.EdgesAndGaps;
 import git.h0llew.uir.features.IFeature;
 import git.h0llew.uir.features.RawDataFeature;
-import git.h0llew.uir.features.RowColHistogram;
 import git.h0llew.uir.utils.DigitsImageLoader;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 public class Main {
 
