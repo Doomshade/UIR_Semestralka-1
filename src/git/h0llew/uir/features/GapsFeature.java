@@ -22,7 +22,7 @@ public class GapsFeature implements IFeature {
     /**
      * vychozi prah
      */
-    public static final int DEFAULT_THRESHOLD = 10;
+    public static final int DEFAULT_THRESHOLD = 40;
 
     //-- PRIVATE ATTRIBUTES
 
@@ -79,13 +79,13 @@ public class GapsFeature implements IFeature {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color pxColor = new Color(rgb[x + y * image.getWidth()]);
 
-                if (!pxColor.equals(Color.BLACK)) {
+                if (pxColor.equals(Color.BLACK)) {
                     if (lastX == -1) {
                         lastX = x;
                         continue;
                     }
 
-                    counter += (x - lastX);
+                    counter += (x - lastX - 1);
                     lastX = x;
                 }
             }

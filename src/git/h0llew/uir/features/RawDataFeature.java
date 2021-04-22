@@ -52,7 +52,7 @@ public class RawDataFeature implements IFeature {
 
     @Override
     public double[] createFeature(BufferedImage image) {
-        BufferedImage binaryImage = BinaryImageConvertor.convertFromGrayscale(image, 10);
+        BufferedImage binaryImage = BinaryImageConvertor.convertFromGrayscale(image, threshold);
 
         double[] res = new double[binaryImage.getWidth() * binaryImage.getHeight()];
         int counter = 0;
