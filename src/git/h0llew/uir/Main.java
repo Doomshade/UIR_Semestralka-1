@@ -2,8 +2,10 @@ package git.h0llew.uir;
 
 import git.h0llew.uir.classifiers.ADigitClassifier;
 import git.h0llew.uir.classifiers.KNearestNeighbours;
+import git.h0llew.uir.classifiers.MinimumDistanceClassifier;
 import git.h0llew.uir.features.EdgesAndGaps;
 import git.h0llew.uir.features.IFeature;
+import git.h0llew.uir.features.RawDataFeature;
 import git.h0llew.uir.features.RowColHistogram;
 import git.h0llew.uir.utils.DigitsImageLoader;
 
@@ -66,12 +68,16 @@ public class Main {
     }
 
     private static void test() {
-        String test = "C:\\Users\\jakub\\Desktop\\mnist_png\\training";
+        String test = "C:\\Users\\jakub\\Desktop\\mnist_experimental\\mnist_png\\training";
         DigitsImageLoader loader = new DigitsImageLoader(test);
+        long s = System.currentTimeMillis();
         BufferedImage[][] images = loader.loadDigits();
+        long e = System.currentTimeMillis() - s;
+        System.out.println("Nacitani training dat: " + e);
 
-        IFeature featureMethod = new EdgesAndGaps();
+        IFeature featureMethod = new RawDataFeature();
 
+        s = System.currentTimeMillis();
         double[][][] featureVectors = new double[images.length][][];
         for (int digit = 0; digit < featureVectors.length; digit++) {
             featureVectors[digit] = new double[images[digit].length][];
@@ -82,15 +88,22 @@ public class Main {
                 imageFeatureVectors[i] = featureVector;
             }
         }
+        e = System.currentTimeMillis() - s;
+        System.out.println("Vytvoreni vektoru training dat: " + e);
 
-        KNearestNeighbours classifier = new KNearestNeighbours(featureVectors);
+        //KNearestNeighbours classifier = new KNearestNeighbours(featureVectors);
+        MinimumDistanceClassifier classifier = new MinimumDistanceClassifier(featureVectors);
         classifier.trainClassifier();
         //int digit = classifier.classifyFeatureVector(featureVectors[0][0]);
 
-        String test1 = "C:\\Users\\jakub\\Desktop\\mnist_png\\testing";
+        s = System.currentTimeMillis();
+        String test1 = "C:\\Users\\jakub\\Desktop\\mnist_experimental\\mnist_png\\testing";
         DigitsImageLoader loader1 = new DigitsImageLoader(test1);
         BufferedImage[][] images1 = loader1.loadDigits();
+        e = System.currentTimeMillis() - s;
+        System.out.println("Nacitani test dat: " + e);
 
+        s = System.currentTimeMillis();
         double[][][] featureVectors1 = new double[images1.length][][];
         for (int digit = 0; digit < featureVectors1.length; digit++) {
             featureVectors1[digit] = new double[images1[digit].length][];
@@ -101,15 +114,19 @@ public class Main {
                 imageFeatureVectors[i] = featureVector;
             }
         }
+        e = System.currentTimeMillis() - s;
+        System.out.println("Vytvoreni vektoru test dat: " + e);
 
-        //double accuracy = classifier.testClassifier(featureVectors1);
-        System.out.println("Hi");
-        for (int i = 2; i < 15; i++) {
+        double accuracy = classifier.testClassifier(featureVectors1);
+        System.out.println(accuracy);
+        /*
+        for (int i = 1; i <= 20; i++) {
             classifier.overrideK(i);
             long start = System.currentTimeMillis();
             double accuracy = classifier.testClassifier(featureVectors1);
             long end = System.currentTimeMillis() - start;
             System.out.println(i + " [" + accuracy + "] " + end);
         }
+         */
     }
 }
